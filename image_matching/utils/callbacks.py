@@ -194,9 +194,9 @@ class VisImageForMatcher(AbstractCallback):
 
                     x = torch.cat(
                         (
-                            args['original'][i],
+                            args['original'][i].to('cpu'),
                             transformed_to_original_img_tensor,
-                            args['transformed'][i]
+                            args['transformed'][i].to('cpu')
                         ),
                         dim=2
                     )

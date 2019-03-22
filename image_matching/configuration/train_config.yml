@@ -11,17 +11,17 @@ model:
   image_size: 224
 
 dataset:
-  images_path: '../../data/images/night_series/'
-  transformation_rectangle_size: 1000
-  transformation_deviate: 50
+  images_path: '/home/alexey/programming/data-for-sha-hackaton/testThumbnails/'
+  transformation_rectangle_size: 100
+  transformation_deviate: 5
   shape: [224, 224]
 
 train:
   lr: 0.001
 
   epochs: 50
-  batch_size: 1
-  number_of_processes: 0
+  batch_size: 64
+  number_of_processes: 8
 
   save:
     model: '../../data/weights/model1/'

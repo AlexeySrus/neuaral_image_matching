@@ -1,4 +1,5 @@
 import cv2
+import os
 import torch
 import numpy as np
 from torch.utils.data import Dataset
@@ -81,10 +82,18 @@ def transform_rectanle(rect, max_shift):
     ]).astype('float32')
 
 
+def load_image(path):
+    img = cv2.imread(path, 1)
+    return cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+
 class TransformFramesDataset(Dataset):
-    def __init__(self, images_list, shape,
+    def __init__(self, images_path, shape,
                  transform_rect_size, transform_deviate):
-        self.images = images_list
+        self.images_pathes = [
+            images_path + '/' + image_name
+            for image_name in os.listdir(images_path)
+        ]
         self.shape = shape
 
         self.rect_size = transform_rect_size
@@ -96,7 +105,7 @@ class TransformFramesDataset(Dataset):
         return np.linalg.inv(cv2.getPerspectiveTransform(rect, rect_dev))
 
     def __len__(self):
-        return 100000
+        return len(self.images_pathes)
 
     def process_to_tensor(self, img):
         crop_shape = list(img.shape[:2])
@@ -113,8 +122,8 @@ class TransformFramesDataset(Dataset):
     def __getitem__(self, idx):
         transform_matrix = self.generate_transform_matrix()
 
-        i = random.randint(0, len(self.images) - 1)
-        img = self.images[i]
+        i = random.randint(0, len(self.images_pathes) - 1)
+        img = load_image(self.images_pathes[i])
         w, h, _ = img.shape
         transform_img = cv2.warpPerspective(
             img,

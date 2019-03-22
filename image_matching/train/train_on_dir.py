@@ -116,11 +116,9 @@ def main():
             optimizer.load_state_dict(torch.load(optim_path,
                                                  map_location='cpu'))
 
-    images_list = load_images_from_path(config['dataset']['images_path'])
-
     train_data = DataLoader(
         TransformFramesDataset(
-            images_list=images_list,
+            images_path=config['dataset']['images_path'],
             shape=config['dataset']['shape'],
             transform_rect_size=config[
                 'dataset'
