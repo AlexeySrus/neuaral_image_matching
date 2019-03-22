@@ -3,8 +3,8 @@ import torch
 import numpy as np
 from torch.utils.data import Dataset
 import random
-from image_matching.utils.tensor_utils import (reshape_tensor,
-                                               crop_batch_by_center)
+from image_matching.utils.image_utils import (crop_image_by_center,
+                                              resize_image)
 
 
 class VideoFramesGenerator:
@@ -87,9 +87,6 @@ class TransformFramesDataset(Dataset):
         self.images = images_list
         self.shape = shape
 
-        for img in self.images:
-            assert self.images[0].shape == img.shape
-
         self.rect_size = transform_rect_size
         self.rect_dev = transform_deviate
 
@@ -102,21 +99,22 @@ class TransformFramesDataset(Dataset):
         return 100000
 
     def process_to_tensor(self, img):
-        t_img = torch.FloatTensor(img).permute(2, 0, 1) / 255.0
-        crop_shape = t_img.shape[-2:]
+        crop_shape = list(img.shape[:2])
         if crop_shape[0] > crop_shape[1]:
             crop_shape[0] -= (crop_shape[0] - crop_shape[1])
         else:
             crop_shape[1] -= (crop_shape[1] - crop_shape[0])
 
-        t_img = crop_batch_by_center(t_img, crop_shape)
-        return reshape_tensor(t_img, self.shape)
+        t_img = crop_image_by_center(img, crop_shape)
+        t_img = resize_image(t_img, self.shape)
+
+        return torch.FloatTensor(t_img).permute(2, 0, 1) / 255.0
 
     def __getitem__(self, idx):
         transform_matrix = self.generate_transform_matrix()
 
         i = random.randint(0, len(self.images) - 1)
-        img = self.images[i].copy()
+        img = self.images[i]
         w, h, _ = img.shape
         transform_img = cv2.warpPerspective(
             img,
@@ -150,20 +148,21 @@ class TransformFramesDatasetByVideo(Dataset):
         return 100000
 
     def process_to_tensor(self, img):
-        t_img = torch.FloatTensor(img).permute(2, 0, 1) / 255.0
-        crop_shape = t_img.shape[-2:]
+        crop_shape = list(img.shape[:2])
         if crop_shape[0] > crop_shape[1]:
             crop_shape[0] -= (crop_shape[0] - crop_shape[1])
         else:
             crop_shape[1] -= (crop_shape[1] - crop_shape[0])
 
-        t_img = crop_batch_by_center(t_img, crop_shape)
-        return reshape_tensor(t_img, self.shape)
+        t_img = crop_image_by_center(img, crop_shape)
+        t_img = resize_image(t_img, self.shape)
+
+        return torch.FloatTensor(t_img).permute(2, 0, 1) / 255.0
 
     def __getitem__(self, idx):
         transform_matrix = self.generate_transform_matrix()
 
-        img = self.video.get_next_frame()['frame'].copy()
+        img = self.video.get_next_frame()['frame']
         w, h, _ = img.shape
         transform_img = cv2.warpPerspective(
             img,

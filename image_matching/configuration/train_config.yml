@@ -14,14 +14,14 @@ dataset:
   images_path: '../../data/images/night_series/'
   transformation_rectangle_size: 1000
   transformation_deviate: 50
-  shape: 224, 224
+  shape: [224, 224]
 
 train:
   lr: 0.001
 
   epochs: 50
-  batch_size: 16
-  number_of_processes: 4
+  batch_size: 1
+  number_of_processes: 0
 
   save:
     model: '../../data/weights/model1/'

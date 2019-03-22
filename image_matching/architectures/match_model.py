@@ -9,20 +9,22 @@ class MatchModel(nn.Module):
         super(MatchModel, self).__init__()
 
         self.resnet = resnet18()
-        self.layer1 = nn.Linear(1024, 9)
+
+        self.layer1 = nn.Linear(512*2, 64)
+        self.layer2 = nn.Linear(64, 9)
 
     def forward(self, original, transformed):
         original_features = self.resnet(original)
         transformed_features = self.resnet(transformed)
 
-        print(original.shape)
-
-        original_x = original_features.view(-1, 1024)
-        transformed_x = transformed_features.view(-1, 1024)
+        original_x = original_features.view(-1, 512)
+        transformed_x = transformed_features.view(-1, 512)
 
         x = torch.cat((original_x, transformed_x), dim=1)
 
         x = self.layer1(x)
+        x = nn.ReLU()(x)
+        x = self.layer2(x)
         x = x.view(-1, 3, 3)
 
         return x

@@ -197,7 +197,8 @@ class VisImageForMatcher(AbstractCallback):
                             args['original'][i],
                             transformed_to_original_img_tensor,
                             args['transformed'][i]
-                        )
+                        ),
+                        dim=2
                     )
 
                     self.windows[win] = self.viz.image(

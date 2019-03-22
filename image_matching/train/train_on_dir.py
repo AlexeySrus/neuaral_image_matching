@@ -15,7 +15,7 @@ from torch.utils.data import DataLoader
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Video denoising train script')
+    parser = argparse.ArgumentParser(description='Images matching train script')
     parser.add_argument('--config', required=False, type=str,
                           default='../configuration/train_config.yml',
                           help='Path to configuration yml file.'
@@ -71,7 +71,7 @@ def main():
 
     if config['visualization']['use_visdom']:
         plots = VisPlot(
-            'Video train',
+            'Images matching train',
             server=config['visualization']['visdom_server'],
             port=config['visualization']['visdom_port']
         )
@@ -79,8 +79,7 @@ def main():
         plots.register_scatterplot('train loss per_batch', 'Batch number',
                                    'Loss',
                                    [
-                                       'mse between y_pred and y_true',
-                                       'mse between y_pred and x'
+                                       'loss'
                                    ])
 
         callbacks.append(plots)
@@ -136,7 +135,7 @@ def main():
         train_data,
         optimizer,
         epochs,
-        F.mse_loss,
+        F.l1_loss,
         init_start_epoch=start_epoch + 1,
         validation_loader=None
     )
