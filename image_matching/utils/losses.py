@@ -5,7 +5,7 @@ from torch.nn import Module
 
 
 def l2(y_pred, y_true):
-    return ((y_pred - y_true) ** 2).mean()
+    return torch.sqrt(((y_pred - y_true) ** 2).sum())
 
 
 def acc(y_pred, y_true):

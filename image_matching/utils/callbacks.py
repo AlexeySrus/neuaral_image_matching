@@ -173,29 +173,28 @@ class VisImageForMatcher(AbstractCallback):
             for win in self.windows.keys():
                 if win == label:
                     pred_transform_matrix = args['y_pred'][i].detach(
-
                     ).to('cpu').numpy()
 
-                    transformed_img = (args['transformed'][i].permute(
+                    original_img = (args['original'][i].permute(
                         1, 2, 0
                     ) * 255.0).to('cpu').numpy().astype('uint8')
 
-                    w, h, _ = transformed_img.shape
-                    transformed_to_original_img = cv2.warpPerspective(
-                        transformed_img,
+                    w, h, _ = original_img.shape
+                    transformed_original_img = cv2.warpPerspective(
+                        original_img,
                         pred_transform_matrix,
                         (h, w),
                         borderMode=cv2.BORDER_REFLECT
                     )
 
-                    transformed_to_original_img_tensor = torch.FloatTensor(
-                        transformed_to_original_img
+                    transformed_original_img_tensor = torch.FloatTensor(
+                        transformed_original_img
                     ).permute(2, 0, 1) / 255.0
 
                     x = torch.cat(
                         (
                             args['original'][i].to('cpu'),
-                            transformed_to_original_img_tensor,
+                            transformed_original_img_tensor,
                             args['transformed'][i].to('cpu')
                         ),
                         dim=2

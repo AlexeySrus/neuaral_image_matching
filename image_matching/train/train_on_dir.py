@@ -11,6 +11,7 @@ from image_matching.utils.callbacks import (SaveModelPerEpoch, VisPlot,
                                         VisImageForMatcher)
 from image_matching.utils.dataset_generator import TransformFramesDataset
 from image_matching.architectures.match_model import MatchModel
+from image_matching.utils.losses import l2
 from torch.utils.data import DataLoader
 
 
@@ -133,7 +134,7 @@ def main():
         train_data,
         optimizer,
         epochs,
-        F.l1_loss,
+        l2,
         init_start_epoch=start_epoch + 1,
         validation_loader=None
     )

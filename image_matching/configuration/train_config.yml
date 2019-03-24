@@ -11,19 +11,19 @@ model:
   image_size: 224
 
 dataset:
-  images_path: '/home/alexey/programming/data-for-sha-hackaton/testThumbnails/'
-  transformation_rectangle_size: 100
-  transformation_deviate: 5
+  images_path: '/home/alexey/programming/CVisionLabProjects/DressComplection/data/dresses_photo/'
+  transformation_rectangle_size: 256
+  transformation_deviate: 10
   shape: [224, 224]
 
 train:
   lr: 0.001
 
-  epochs: 50
-  batch_size: 64
+  epochs: 1000
+  batch_size: 32
   number_of_processes: 8
 
   save:
-    model: '../../data/weights/model1/'
-    every: 2
+    model: '../../data/weights/model4/'
+    every: 100
   load: True

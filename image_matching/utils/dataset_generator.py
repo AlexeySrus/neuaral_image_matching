@@ -102,7 +102,7 @@ class TransformFramesDataset(Dataset):
     def generate_transform_matrix(self):
         rect = get_rectanle_points(self.rect_size)
         rect_dev = transform_rectanle(rect, self.rect_dev)
-        return np.linalg.inv(cv2.getPerspectiveTransform(rect, rect_dev))
+        return cv2.getPerspectiveTransform(rect, rect_dev)
 
     def __len__(self):
         return len(self.images_pathes)
@@ -151,7 +151,7 @@ class TransformFramesDatasetByVideo(Dataset):
     def generate_transform_matrix(self):
         rect = get_rectanle_points(self.rect_size)
         rect_dev = transform_rectanle(rect, self.rect_dev)
-        return np.linalg.inv(cv2.getPerspectiveTransform(rect, rect_dev))
+        return cv2.getPerspectiveTransform(rect, rect_dev)
 
     def __len__(self):
         return 100000
@@ -179,6 +179,8 @@ class TransformFramesDatasetByVideo(Dataset):
             (h, w),
             borderMode=cv2.BORDER_REFLECT
         )
+
+        transform_matrix = np.linalg.inv(transform_matrix)
 
         return (
             self.process_to_tensor(img),
