@@ -8,7 +8,7 @@ class MatchModel(nn.Module):
     def __init__(self):
         super(MatchModel, self).__init__()
 
-        self.resnet = resnet101(True)
+        self.resnet = resnet101(False)
 
         self.layer1 = nn.Linear(2048*2, 64)
         self.layer2 = nn.Linear(64, 9)

@@ -1,7 +1,6 @@
 import numpy as np
 import cv2
 
-
 img = cv2.imread('../../data/images/night_series/7.png', 1)
 
 cv2.namedWindow('Image', cv2.WINDOW_NORMAL)

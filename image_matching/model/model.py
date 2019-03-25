@@ -2,10 +2,10 @@ import torch
 import tqdm
 import os
 import re
+import cv2
 from image_matching.utils.losses import l2
 from image_matching.utils.losses import acc as acc_function
-from image_matching.utils.tensor_utils import flatten
-from image_matching.utils.tensor_utils import crop_batch_by_center
+from image_matching.utils.image_utils import image_to_quadrate
 
 
 def get_lr(optimizer):
@@ -140,8 +140,29 @@ class Model:
         pass
 
     def predict(self,
-                image):
-        pass
+                image_original,
+                transformed_image,
+                shape):
+        t_transformed_image = image_to_quadrate(transformed_image, shape)
+        t_image_original = image_to_quadrate(image_original, shape)
+
+        t_transformed_image = torch.FloatTensor(
+            t_transformed_image
+        ).permute(2, 0, 1).unsqueeze(0) / 255.0
+
+        t_image_original = torch.FloatTensor(
+            t_image_original
+        ).permute(2, 0, 1).unsqueeze(0) / 255.0
+
+        transform_matrix = self.model(
+            t_transformed_image, t_image_original
+        ).squeeze(0).detach().to('cpu').numpy()
+
+        w, h, _ = transformed_image.shape
+        res_img = cv2.warpPerspective(transformed_image, transform_matrix,
+                                      (h, w),
+                                      borderMode=cv2.BORDER_REFLECT)
+        return res_img, transform_matrix
 
     def set_callbacks(self, callbacks_list):
         self.callbacks = callbacks_list

@@ -5,7 +5,7 @@ import numpy as np
 from torch.utils.data import Dataset
 import random
 from image_matching.utils.image_utils import (crop_image_by_center,
-                                              resize_image)
+                                              resize_image, image_to_quadrate)
 
 
 class VideoFramesGenerator:
@@ -108,15 +108,7 @@ class TransformFramesDataset(Dataset):
         return len(self.images_pathes)
 
     def process_to_tensor(self, img):
-        crop_shape = list(img.shape[:2])
-        if crop_shape[0] > crop_shape[1]:
-            crop_shape[0] -= (crop_shape[0] - crop_shape[1])
-        else:
-            crop_shape[1] -= (crop_shape[1] - crop_shape[0])
-
-        t_img = crop_image_by_center(img, crop_shape)
-        t_img = resize_image(t_img, self.shape)
-
+        t_img = image_to_quadrate(img, self.shape)
         return torch.FloatTensor(t_img).permute(2, 0, 1) / 255.0
 
     def __getitem__(self, idx):
@@ -157,15 +149,7 @@ class TransformFramesDatasetByVideo(Dataset):
         return 100000
 
     def process_to_tensor(self, img):
-        crop_shape = list(img.shape[:2])
-        if crop_shape[0] > crop_shape[1]:
-            crop_shape[0] -= (crop_shape[0] - crop_shape[1])
-        else:
-            crop_shape[1] -= (crop_shape[1] - crop_shape[0])
-
-        t_img = crop_image_by_center(img, crop_shape)
-        t_img = resize_image(t_img, self.shape)
-
+        t_img = image_to_quadrate(img, self.shape)
         return torch.FloatTensor(t_img).permute(2, 0, 1) / 255.0
 
     def __getitem__(self, idx):

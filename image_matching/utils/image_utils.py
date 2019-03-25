@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+import torch
 
 
 def resize_coeff(x, new_x):
@@ -97,3 +98,16 @@ def image_preprocessing(img):
     k = np.ones((55 - 15, 55 - 15))
     im = upper_bin(cv2.morphologyEx(im, cv2.MORPH_DILATE, k), 10)
     return cv2.cvtColor(im, cv2.COLOR_GRAY2RGB)
+
+
+def image_to_quadrate(img, shape):
+    crop_shape = list(img.shape[:2])
+    if crop_shape[0] > crop_shape[1]:
+        crop_shape[0] -= (crop_shape[0] - crop_shape[1])
+    else:
+        crop_shape[1] -= (crop_shape[1] - crop_shape[0])
+
+    t_img = crop_image_by_center(img, crop_shape)
+    t_img = resize_image(t_img, shape)
+
+    return img
